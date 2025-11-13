@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        input { padding: 8px; width: 300px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Admin Management API Test</h1>
+
+    <div class="section">
+        <h2>Step 1: Login</h2>
+        <input type="text" id="username" placeholder="Username" value="superadmin">
+        <input type="password" id="password" placeholder="Password" value="admin123">
+        <button onclick="login()">Login</button>
+        <pre id="loginResult"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Step 2: Get State Admins</h2>
+        <button onclick="getStateAdmins()">Get State Admins</button>
+        <pre id="adminsResult"></pre>
+    </div>
+
+    <script>
+        let accessToken = null;
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+                document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+
+                if (data.access) {
+                    accessToken = data.access;
+                    localStorage.setItem('access_token', accessToken);
+                    alert('Login successful! Token saved.');
+                } else {
+                    alert('Login failed!');
+                }
+            } catch (error) {
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getStateAdmins() {
+            if (!accessToken) {
+                accessToken = localStorage.getItem('access_token');
+                if (!accessToken) {
+                    alert('Please login first!');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/superadmin/users/state_admins/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+
+                const data = await response.json();
+                document.getElementById('adminsResult').textContent = JSON.stringify(data, null, 2);
+
+                if (data.success && data.count > 0) {
+                    alert(`Found ${data.count} state admin(s)!`);
+                } else {
+                    alert('No state admins found or API error');
+                }
+            } catch (error) {
+                document.getElementById('adminsResult').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

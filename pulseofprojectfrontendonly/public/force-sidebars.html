@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Sidebars Visible</title>
+    <script>
+        // Clear any saved state
+        localStorage.removeItem('dual-sidebar-state');
+
+        // Force sidebars to be visible
+        localStorage.setItem('dual-sidebar-state', JSON.stringify({
+            activeCategory: 'dashboard',
+            isPinned: true
+        }));
+
+        // Redirect immediately
+        window.location.href = 'http://localhost:5173/dashboard';
+    </script>
+</head>
+<body>
+    Redirecting...
+</body>
+</html>

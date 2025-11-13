@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supabase Connection</title>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="testLogin()">Test Login</button>
+    <div id="result"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const supabaseUrl = 'https://iwtgbseaoztjbnvworyq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3dGdic2Vhb3p0amJudndvcnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNjAzOTksImV4cCI6MjA3NjczNjM5OX0.xA4B0XZJE_4MdjFCkw2yVsf4vlHmHfpeV6Bk5tG2T94';
+
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        window.testConnection = async function() {
+            const resultDiv = document.getElementById('result');
+            try {
+                resultDiv.innerHTML = 'Testing connection...';
+
+                // Test if we can reach Supabase
+                const { data, error } = await supabase.from('users').select('count', { count: 'exact' });
+
+                if (error) {
+                    resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                    if (error.message.includes('relation "public.users" does not exist')) {
+                        resultDiv.innerHTML += '<p>Users table does not exist. Please run the SQL script to create it.</p>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<p style="color: green;">✅ Connection successful!</p>';
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<p style="color: red;">Connection failed: ${err.message}</p>`;
+            }
+        }
+
+        window.testLogin = async function() {
+            const resultDiv = document.getElementById('result');
+            const email = prompt('Enter email:');
+            const password = prompt('Enter password:');
+
+            if (!email || !password) return;
+
+            try {
+                resultDiv.innerHTML = 'Testing login...';
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    resultDiv.innerHTML = `<p style="color: red;">Login failed: ${error.message}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: green;">✅ Login successful!</p>`;
+                    resultDiv.innerHTML += `<p>User ID: ${data.user.id}</p>`;
+                    resultDiv.innerHTML += `<p>Email: ${data.user.email}</p>`;
+
+                    // Try to fetch user data
+                    const { data: userData, error: userError } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('email', data.user.email)
+                        .single();
+
+                    if (userError) {
+                        resultDiv.innerHTML += `<p style="color: orange;">⚠️ User profile not found in users table</p>`;
+                    } else {
+                        resultDiv.innerHTML += `<p style="color: green;">✅ User profile found: ${userData.name || userData.email}</p>`;
+                    }
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

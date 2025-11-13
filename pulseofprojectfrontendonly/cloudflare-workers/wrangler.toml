@@ -1,0 +1,37 @@
+name = "pulse-of-people-router"
+main = "tenant-router.js"
+compatibility_date = "2024-01-01"
+
+# Workers KV for caching
+kv_namespaces = [
+  { binding = "TENANT_CACHE", id = "your_kv_namespace_id", preview_id = "your_preview_kv_id" }
+]
+
+# Environment variables
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.production.vars]
+# Set these as secrets using: wrangler secret put <NAME>
+# TENANT_REGISTRY_URL = "https://registry.pulseofpeople.com"
+# TENANT_REGISTRY_KEY = "your-registry-api-key"
+
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+
+# Routes - map domains to this worker
+[[routes]]
+pattern = "*.pulseofpeople.com/*"
+zone_name = "pulseofpeople.com"
+
+[[routes]]
+pattern = "api.pulseofpeople.com/*"
+zone_name = "pulseofpeople.com"
+
+# Observability
+[observability]
+enabled = true
+
+# Limits
+[limits]
+cpu_ms = 50

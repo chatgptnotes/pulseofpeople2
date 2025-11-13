@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Tenant Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .tenant-info {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background: rgba(34, 197, 94, 0.3); }
+        .error { background: rgba(239, 68, 68, 0.3); }
+        .warning { background: rgba(251, 146, 60, 0.3); }
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4338ca;
+        }
+        .test-links {
+            margin: 20px 0;
+        }
+        .test-links a {
+            color: #60a5fa;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multi-Tenant Testing Dashboard</h1>
+
+        <div class="tenant-info">
+            <h2>Current Tenant Detection</h2>
+            <div id="tenantInfo">Detecting...</div>
+        </div>
+
+        <div class="test-links">
+            <h3>Test Different Tenants:</h3>
+            <a href="http://localhost:5173">No Tenant (Default)</a>
+            <a href="http://party-a.localhost:5173">Party A</a>
+            <a href="http://party-b.localhost:5173">Party B</a>
+        </div>
+
+        <div class="test-links">
+            <h3>Test with URL Parameters:</h3>
+            <a href="http://localhost:5173?tenant=party-a">Party A (via param)</a>
+            <a href="http://localhost:5173?tenant=party-b">Party B (via param)</a>
+        </div>
+
+        <div>
+            <h3>Configuration Status:</h3>
+            <div id="configStatus"></div>
+        </div>
+
+        <button onclick="testTenantDetection()">Test Tenant Detection</button>
+        <button onclick="checkEnvVariables()">Check Environment</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Function to detect tenant from subdomain
+        function detectTenant() {
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+
+            // Check URL parameter first (for development)
+            const urlParams = new URLSearchParams(window.location.search);
+            const tenantParam = urlParams.get('tenant');
+
+            let tenant = null;
+            let method = '';
+
+            if (tenantParam) {
+                tenant = tenantParam;
+                method = 'URL Parameter';
+            } else if (parts.length > 1 && parts[0] !== 'www') {
+                // Extract subdomain
+                if (hostname.includes('localhost')) {
+                    // For localhost, check if there's a subdomain before 'localhost'
+                    if (parts.length > 1 && parts[0] !== 'localhost') {
+                        tenant = parts[0];
+                        method = 'Subdomain';
+                    }
+                } else {
+                    // For production domains
+                    tenant = parts[0];
+                    method = 'Subdomain';
+                }
+            }
+
+            return { tenant, method };
+        }
+
+        // Display current tenant info
+        function displayTenantInfo() {
+            const { tenant, method } = detectTenant();
+            const infoDiv = document.getElementById('tenantInfo');
+
+            if (tenant) {
+                infoDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>Tenant Detected:</strong> ${tenant}<br>
+                        <strong>Detection Method:</strong> ${method}<br>
+                        <strong>Current URL:</strong> ${window.location.href}
+                    </div>
+                `;
+            } else {
+                infoDiv.innerHTML = `
+                    <div class="status warning">
+                        <strong>No tenant detected</strong><br>
+                        <strong>Current URL:</strong> ${window.location.href}<br>
+                        <em>This would use the default tenant or show tenant selection</em>
+                    </div>
+                `;
+            }
+        }
+
+        // Test tenant detection
+        function testTenantDetection() {
+            const resultsDiv = document.getElementById('results');
+            const testUrls = [
+                'http://localhost:5173',
+                'http://party-a.localhost:5173',
+                'http://party-b.localhost:5173',
+                'http://localhost:5173?tenant=party-a',
+                'http://localhost:5173?tenant=party-b'
+            ];
+
+            resultsDiv.innerHTML = '<h3>Tenant Detection Test Results:</h3>';
+
+            testUrls.forEach(url => {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname;
+                const parts = hostname.split('.');
+                const tenantParam = urlObj.searchParams.get('tenant');
+
+                let detectedTenant = null;
+                if (tenantParam) {
+                    detectedTenant = tenantParam;
+                } else if (parts.length > 1 && parts[0] !== 'localhost' && parts[0] !== 'www') {
+                    detectedTenant = parts[0];
+                }
+
+                resultsDiv.innerHTML += `
+                    <div class="status ${detectedTenant ? 'success' : 'warning'}">
+                        URL: ${url}<br>
+                        Detected Tenant: ${detectedTenant || 'None (default)'}
+                    </div>
+                `;
+            });
+        }
+
+        // Check environment variables (simulated)
+        function checkEnvVariables() {
+            const configDiv = document.getElementById('configStatus');
+
+            // In a real React app, these would come from import.meta.env
+            const config = {
+                VITE_MULTI_TENANT: 'true', // Should be true for multi-tenant
+                VITE_APP_URL: 'https://pulseofpeople.com',
+                VITE_TENANT_MODE: 'subdomain',
+                VITE_SUPABASE_URL: 'Configured',
+                VITE_SUPABASE_ANON_KEY: 'Configured'
+            };
+
+            configDiv.innerHTML = '<h4>Environment Configuration:</h4>';
+
+            for (const [key, value] of Object.entries(config)) {
+                const status = value ? 'success' : 'error';
+                const displayValue = key.includes('KEY') ? '***' : value;
+                configDiv.innerHTML += `
+                    <div class="status ${status}">
+                        ${key}: ${displayValue}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            displayTenantInfo();
+            checkEnvVariables();
+        };
+    </script>
+</body>
+</html>

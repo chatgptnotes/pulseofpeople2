@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <h1>Django Login Test</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testLogin() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Testing...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'superadmin',
+                        password: 'bhupendra'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultEl.textContent = '✅ SUCCESS!\n\n' + JSON.stringify(data, null, 2);
+                    console.log('Tokens:', data);
+                } else {
+                    resultEl.textContent = '❌ FAILED!\n\n' + JSON.stringify(data, null, 2);
+                    console.error('Error:', data);
+                }
+            } catch (error) {
+                resultEl.textContent = '❌ ERROR!\n\n' + error.message;
+                console.error('Exception:', error);
+            }
+        }
+    </script>
+</body>
+</html>

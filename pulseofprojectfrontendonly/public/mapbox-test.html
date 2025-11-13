@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mapbox Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    console.log('Starting Mapbox test...');
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+    console.log('Token set:', mapboxgl.accessToken);
+
+    try {
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [78.6569, 11.1271], // Tamil Nadu
+            zoom: 7
+        });
+
+        map.on('load', function() {
+            console.log('✅ Map loaded successfully!');
+            alert('SUCCESS! Mapbox is working!');
+        });
+
+        map.on('error', function(e) {
+            console.error('❌ Map error:', e);
+            alert('ERROR: ' + e.error.message);
+        });
+
+        console.log('Map object created:', map);
+    } catch (error) {
+        console.error('❌ Failed to create map:', error);
+        alert('FAILED: ' + error.message);
+    }
+</script>
+</body>
+</html>
