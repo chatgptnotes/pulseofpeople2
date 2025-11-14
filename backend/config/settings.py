@@ -237,6 +237,8 @@ if not DEBUG:
         'https://api.pulseofpeople.com',
         'https://pulseofpeople2-tsdp.vercel.app',
         'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
+        'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
+        'https://pulseofprojectfrontendonly.vercel.app',
     ])
 
 CORS_ALLOW_CREDENTIALS = True
@@ -288,4 +290,6 @@ if not DEBUG:
         'https://api.pulseofpeople.com',
         'https://pulseofpeople2-tsdp.vercel.app',
         'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
+        'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
+        'https://pulseofprojectfrontendonly.vercel.app',
     ])
