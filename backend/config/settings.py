@@ -222,26 +222,28 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-# CORS Settings
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174',
-    cast=lambda v: [s.strip() for s in v.split(',')]
-)
+# CORS Settings - Always include production URLs for deployment
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5174',
+    'https://pulseofpeople.com',
+    'https://www.pulseofpeople.com',
+    'https://api.pulseofpeople.com',
+    'https://pulseofpeople2-tsdp.vercel.app',
+    'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
+    'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
+    'https://pulseofprojectfrontendonly.vercel.app',
+]
 
-# Production domains
-if not DEBUG:
-    CORS_ALLOWED_ORIGINS.extend([
-        'https://pulseofpeople.com',
-        'https://www.pulseofpeople.com',
-        'https://api.pulseofpeople.com',
-        'https://pulseofpeople2-tsdp.vercel.app',
-        'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
-        'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
-        'https://pulseofprojectfrontendonly.vercel.app',
-    ])
+# Allow custom CORS origins from environment variable
+custom_cors_origins = config('CORS_ALLOWED_ORIGINS', default='', cast=str)
+if custom_cors_origins:
+    CORS_ALLOWED_ORIGINS.extend([s.strip() for s in custom_cors_origins.split(',') if s.strip()])
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Security: explicitly disable allow all
 
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -276,20 +278,21 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-# CSRF trusted origins
-CSRF_TRUSTED_ORIGINS = config(
-    'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost:5173,http://127.0.0.1:5173',
-    cast=lambda v: [s.strip() for s in v.split(',')]
-)
+# CSRF trusted origins - Always include production URLs for deployment
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://pulseofpeople.com',
+    'https://www.pulseofpeople.com',
+    'https://api.pulseofpeople.com',
+    'https://pulseofpeople2-tsdp.vercel.app',
+    'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
+    'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
+    'https://pulseofprojectfrontendonly.vercel.app',
+    'https://pulseofpeople2-1.onrender.com',
+]
 
-if not DEBUG:
-    CSRF_TRUSTED_ORIGINS.extend([
-        'https://pulseofpeople.com',
-        'https://www.pulseofpeople.com',
-        'https://api.pulseofpeople.com',
-        'https://pulseofpeople2-tsdp.vercel.app',
-        'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
-        'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
-        'https://pulseofprojectfrontendonly.vercel.app',
-    ])
+# Allow custom CSRF trusted origins from environment variable
+custom_csrf_origins = config('CSRF_TRUSTED_ORIGINS', default='', cast=str)
+if custom_csrf_origins:
+    CSRF_TRUSTED_ORIGINS.extend([s.strip() for s in custom_csrf_origins.split(',') if s.strip()])
