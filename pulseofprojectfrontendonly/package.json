@@ -43,7 +43,7 @@
     "_comment_utils": "=== Utilities ===",
     "clean": "rm -rf dist node_modules .turbo",
     "install:all": "npm install && cd cloudflare-workers && npm install",
-    "postinstall": "husky install"
+    "postinstall": "husky install || true"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
