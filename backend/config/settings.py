@@ -236,6 +236,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://pulseofprojectfrontendonly-luaxgxq9h.vercel.app',
     'https://pulseofprojectfrontendonly.vercel.app',
     'https://pulseofpeople2-luo0degkz-chatgptnotes-6366s-projects.vercel.app',
+    'https://pulseofprojectfrontendonly-jcakbfxeb.vercel.app',
 ]
 
 # Allow custom CORS origins from environment variable
@@ -292,6 +293,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://pulseofprojectfrontendonly.vercel.app',
     'https://pulseofpeople2-1.onrender.com',
     'https://pulseofpeople2-luo0degkz-chatgptnotes-6366s-projects.vercel.app',
+    'https://pulseofprojectfrontendonly-jcakbfxeb.vercel.app',
 ]
 
 # Allow custom CSRF trusted origins from environment variable
