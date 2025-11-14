@@ -35,6 +35,8 @@ if not DEBUG:
         'pulseofpeople.com',
         'www.pulseofpeople.com',
         'api.pulseofpeople.com',
+        '.onrender.com',
+        '.vercel.app',
     ])
 
 
@@ -233,6 +235,8 @@ if not DEBUG:
         'https://pulseofpeople.com',
         'https://www.pulseofpeople.com',
         'https://api.pulseofpeople.com',
+        'https://pulseofpeople2-tsdp.vercel.app',
+        'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
     ])
 
 CORS_ALLOW_CREDENTIALS = True
@@ -282,4 +286,6 @@ if not DEBUG:
         'https://pulseofpeople.com',
         'https://www.pulseofpeople.com',
         'https://api.pulseofpeople.com',
+        'https://pulseofpeople2-tsdp.vercel.app',
+        'https://pulseofpeople2-tsdp-pwfv4sac2-chatgptnotes-6366s-projects.vercel.app',
     ])
