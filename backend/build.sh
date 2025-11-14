@@ -10,3 +10,6 @@ python manage.py collectstatic --no-input
 
 # Run migrations
 python manage.py migrate
+
+# Create demo users (creates or updates with password 'password')
+python manage.py create_demo_users
