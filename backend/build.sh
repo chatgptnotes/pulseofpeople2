@@ -2,14 +2,16 @@
 # exit on error
 set -o errexit
 
-# Install dependencies
+echo "📦 Installing dependencies..."
 pip install -r requirements.txt
 
-# Collect static files
+echo "📁 Collecting static files..."
 python manage.py collectstatic --no-input
 
-# Run migrations
+echo "🗄️  Running migrations..."
 python manage.py migrate
 
-# Create demo users (creates or updates with password 'password')
-python manage.py create_demo_users
+echo "👥 Creating demo users..."
+python manage.py create_demo_users || echo "⚠️  Warning: Demo users creation failed (will continue anyway)"
+
+echo "✅ Build complete!"
