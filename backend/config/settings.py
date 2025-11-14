@@ -97,8 +97,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database Configuration
-# Temporarily using SQLite for local development
-# Switch back to PostgreSQL once Supabase connection is resolved
+# SQLite for local development, PostgreSQL (Supabase) for production
 
 USE_SQLITE = config('USE_SQLITE', default=True, cast=bool)
 
@@ -111,18 +110,23 @@ if USE_SQLITE:
         }
     }
 else:
-    # PostgreSQL with Supabase
+    # PostgreSQL with Supabase (Production)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': config('DB_NAME', default='postgres'),
             'USER': config('DB_USER', default='postgres'),
             'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST', default='db.iwtgbseaoztjbnvworyq.supabase.com'),
+            'HOST': config('DB_HOST', default='db.iiefjgytmxrjbctfqxni.supabase.co'),
             'PORT': config('DB_PORT', default='5432'),
             'OPTIONS': {
-                'sslmode': config('DB_SSLMODE', default='prefer'),
+                'sslmode': config('DB_SSLMODE', default='require'),
+                'connect_timeout': 30,
+                'application_name': 'pulseofpeople_django',
+                'options': '-c search_path=public',
             },
+            'CONN_MAX_AGE': 600,  # Connection pooling: reuse connections for 10 minutes
+            'CONN_HEALTH_CHECKS': True,  # Check connection health before reusing
         }
     }
 
